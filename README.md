@@ -71,7 +71,7 @@ yoyo-story-time/
 
 | Version | Target Features                                          | Status       |
 |---------|----------------------------------------------------------|--------------|
-| `v0.1`  | ✅ User login<br>✅ profile creation ✅ Story generation<br>| In Progress  |
+| `v0.1`  | ✅ User login<br>✅ profile creation<br> ✅ Story generation<br>| In Progress  |
 | `v0.2`  | 🔊 Add narration<br>🖼️ Add illustrations | Planned      |
 | `v1.0`  | 🧪 Full test coverage<br>🚀 Production deployment<br>👨‍👩‍👧 Polished UI and UX | Planned      |
 
