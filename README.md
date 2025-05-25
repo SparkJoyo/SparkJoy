@@ -66,6 +66,19 @@ yoyo-story-time/
 
 ---
 
+
+## 🎯 Release Milestones
+
+| Version | Target Features                                          | Status       |
+|---------|----------------------------------------------------------|--------------|
+| `v0.1`  | ✅ User login<br>✅ profile creation ✅ Story generation<br>| In Progress  |
+| `v0.2`  | 🔊 Add narration<br>🖼️ Add illustrations | Planned      |
+| `v1.0`  | 🧪 Full test coverage<br>🚀 Production deployment<br>👨‍👩‍👧 Polished UI and UX | Planned      |
+
+Each version is tagged and released on GitHub once stable. Use tags like `v0.1`, `v0.2`, etc. to track milestones.
+
+"""
+
 ## 🪪 License
 
 MIT
