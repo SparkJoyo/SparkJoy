@@ -1,5 +1,5 @@
 
-# 📦 Yoyo Story Time – Backend
+# 📦 Joyo Story Time – Backend
 
 This is the **FastAPI backend**. It provides API endpoints for handling user profiles, generating personalized stories and much more.
 
