@@ -3,3 +3,4 @@ uvicorn
 boto3              # AWS S3, DynamoDB
 openai             # Story generation
 pydantic
+dotenv

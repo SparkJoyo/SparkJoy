@@ -25,4 +25,5 @@ with st.form("login_form"):
             st.markdown("[➡️ Go to Profile Page](./2_Profile)")
             st.stop()
         else:
+            print("Login failed", token)
             st.error("❌ Login failed. Please check your credentials.")

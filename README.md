@@ -109,12 +109,33 @@ yoyo-story-time/
 
 ## 🚀 Getting Started
 
+### Setting up Virtual Environment
+
+1. Create a virtual environment:
 ```bash
-cd infra/docker
-docker-compose up --build
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+.\venv\Scripts\activate
 ```
 
-This will start:
+2. Install dependencies:
+```bash
+# Install backend dependencies
+cd backend
+pip install -r requirements.txt
+
+# Install frontend dependencies
+cd ../frontend
+pip install -r requirements.txt
+```
+
+### Running the Application
+
 - FastAPI backend on `http://localhost:8000`
 - Streamlit frontend on `http://localhost:8501`
 
