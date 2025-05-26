@@ -17,26 +17,23 @@ profile = st.session_state.get("profile", {})
 character_keys = profile.get("image_keys", [])
 setting_keys = profile.get("image_keys", [])  # reuse for now or customize
 
-st.subheader("🎭 Character Images")
+st.subheader("🎭 Character Images (Optional)")
 selected_characters = st.multiselect("Choose character image keys", character_keys)
 
-st.subheader("🌍 Setting Images")
+st.subheader("🌍 Setting Images (Optional)")
 selected_settings = st.multiselect("Choose setting image keys", setting_keys)
 
 # Generate story
 if st.button("✨ Generate Story"):
-    if not selected_characters or not selected_settings:
-        st.error("Please select at least one character and one setting.")
-    else:
-        with st.spinner("Generating your story..."):
-            data = {
-                "character_keys": selected_characters,
-                "setting_keys": selected_settings
-            }
-            result = generate_story(token, data)
+    with st.spinner("Generating your story..."):
+        data = {
+            "character_keys": selected_characters,
+            "setting_keys": selected_settings
+        }
+        result = generate_story(token, data)
 
-            if result:
-                st.success(f"✅ Story: {result['title']}")
-                st.write(result['story'])
-            else:
-                st.error("❌ Failed to generate story.")
+        if result:
+            st.success(f"✅ Story: {result['title']}")
+            st.write(result['story'])
+        else:
+            st.error("❌ Failed to generate story.")
