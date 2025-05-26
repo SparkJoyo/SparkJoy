@@ -26,6 +26,10 @@ selected_settings = st.multiselect("Choose setting image keys", setting_keys)
 # Generate story
 if st.button("✨ Generate Story"):
     with st.spinner("Generating your story..."):
+        # Use default character "Elsa" if no characters are selected
+        if not selected_characters:
+            selected_characters = ["Elsa"]
+            
         data = {
             "character_keys": selected_characters,
             "setting_keys": selected_settings
