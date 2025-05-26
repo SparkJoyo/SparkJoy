@@ -1,13 +1,13 @@
-# 🧸 Yoyo Story Time
+# 🧸 Joyo Story Time
 
-Yoyo Story Time is a fun, AI-powered web app that lets users create personalized bedtime stories.
+Joyo Story Time is a fun, AI-powered web app that lets users create personalized bedtime stories.
 
 ---
 
 ## ✨ Features
 
-- 🧑‍💻 User login via AWS Cognito
-- 📝 Story generation with OpenAI API
+- 🧑‍💻 User login 
+- 📝 Story generation 
 - 🎨 Visuals and illustrations generated from your images
 - 🎵 AI-generated background music
 - 🔄 **Synchronized story experience:** Text, visuals, and music are presented together, page by page
