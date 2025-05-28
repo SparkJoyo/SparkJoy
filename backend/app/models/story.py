@@ -1,18 +1,18 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field
+from typing import List, Optional
 
 class StoryRequest(BaseModel):
     """
     Request model for generating a story.
 
     Attributes:
-        character_keys (List[str]): List of keywords or identifiers representing the main characters in the story.
-            Example values: ["brave bear", "curious astronaut", "talking tree", "pirate captain", "robot dog"]
-        setting_keys (List[str]): List of keywords or identifiers representing the main settings, locations, or environments where the story takes place.
-            Example values: ["enchanted forest", "space station", "underwater city", "mountain village", "pirate ship"]
+        image_keys (Optional[List[str]]): List of image keys associated with the story.
+        instructions (Optional[str]): Additional text instructions for the story.
+        length (Optional[str]): The length of the story. Can be "Short", "Medium", or "Long".
     """
-    character_keys: List[str]
-    setting_keys: List[str]
+    image_keys: Optional[List[str]] = Field(default_factory=list)
+    instructions: Optional[str] = None
+    length: Optional[str] = "Medium"  # Short, Medium, Long
 
 class StoryResponse(BaseModel):
     """
@@ -21,12 +21,8 @@ class StoryResponse(BaseModel):
     Attributes:
         title (str): The title of the generated story.
         story (str): The full text of the generated story.
-        character_keys (List[str]): List of keywords or identifiers representing the main characters in the story.
-            Example values: ["brave bear", "curious astronaut", "talking tree", "pirate captain", "robot dog"]
-        setting_keys (List[str]): List of keywords or identifiers representing the main settings, locations, or environments where the story takes place.
-            Example values: ["enchanted forest", "space station", "underwater city", "mountain village", "pirate ship"]
+        image_keys (List[str]): List of image keys used in the story generation.
     """
     title: str
     story: str
-    character_keys: List[str]
-    setting_keys: List[str]
+    image_keys: List[str] = Field(default_factory=list)

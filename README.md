@@ -18,7 +18,7 @@ Joyo Story Time is a fun, AI-powered web app that lets users create personalized
 ## 🚩 MVP Goal
 
 Allow a parent to:
-1. Upload 1–5 images.
+1. Upload 0–5 images or provide text instructions.
 2. Generate a personalized story inspired by the images.
 3. Create visuals (illustrations) and background music that incorporate the uploaded images.
 4. **Present the story in a synchronized, read-along/watch-along format** suitable for toddlers (ages 3–5), where text, visuals, and music are in sync.
@@ -28,6 +28,7 @@ Allow a parent to:
 ## 🛠️ MVP Feature List
 
 - **Image Upload**: Upload 1–5 images (drag & drop or file picker).
+- **Text Instruction**: Or provide text instruction on how to generate a story
 - **Story Generation**: AI generates a short, age-appropriate story using the images as inspiration.
 - **Visuals Generation**: AI creates illustrations or animates the uploaded images to match the story.
 - **Music Generation**: AI generates simple, soothing background music.
