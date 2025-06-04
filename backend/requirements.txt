@@ -4,3 +4,6 @@ boto3              # AWS S3, DynamoDB
 openai             # Story generation
 pydantic
 dotenv
+together
+# CrewAI Multi-Agent Framework
+crewai
