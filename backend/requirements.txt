@@ -5,3 +5,5 @@ openai             # Story generation
 pydantic
 dotenv
 together
+pytest 
+pytest-asyncio

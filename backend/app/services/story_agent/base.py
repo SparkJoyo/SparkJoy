@@ -2,7 +2,7 @@
 from __future__ import annotations
 import openai, os, textwrap, asyncio
 from typing import Any, Dict
-from llm_providers import LLMProvider
+from app.services.story_agent.llm_providers import LLMProvider
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
