@@ -1,6 +1,7 @@
 from typing import List, Dict, Any
 import openai
 import anthropic
+import xai_sdk
 
 class LLMProvider:
     def format_messages(self, system_prompt, user_msg, **kwargs):
@@ -47,4 +48,77 @@ class ClaudeProvider(LLMProvider):
             temperature=kwargs.get("temperature", 0.7),
             max_tokens=kwargs.get("max_tokens", 1024),
         )
-        return resp.content[0].text
+        return resp.content[0].text           # ≥ 1.3.5
+# If you prefer sync calls, swap in:  from openai import OpenAI
+
+
+import httpx
+from typing import List, Dict, Any
+
+class GrokProvider(LLMProvider):
+    """
+    Asynchronous provider for xAI Grok models via the native REST API.
+    
+    Example
+    -------
+    prov = GrokProvider(api_key="XAI_API_KEY", model="grok-2-latest")
+    msgs = prov.format_messages("You are a helpful assistant.", "Hello Grok!")
+    answer = await prov.generate(msgs)
+    """
+    _BASE_URL = "https://api.x.ai/v1"
+
+    def __init__(self, api_key: str, model: str = "grok-3"):
+        self.api_key = api_key
+        self.model = model
+        self._client = httpx.AsyncClient(
+            base_url=self._BASE_URL,
+            headers={"Authorization": f"Bearer {api_key}",
+                     "Content-Type": "application/json"},
+            timeout=30.0,
+        )
+
+    # ────────────────────────────────────────────────
+    # Message helpers
+    # ────────────────────────────────────────────────
+    def format_messages(
+        self,
+        system_prompt: str,
+        user_msg: str,
+        **_: Any
+    ) -> List[Dict[str, str]]:
+        """
+        Grok follows the OpenAI-style schema: each message has a role and content.
+        """
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user",   "content": user_msg},
+        ]
+
+    # ────────────────────────────────────────────────
+    # Generation
+    # ────────────────────────────────────────────────
+    async def generate(
+        self,
+        messages: List[Dict[str, str]],
+        **kwargs: Any
+    ) -> str:
+        """
+        Sends a chat completion request and returns the assistant’s reply text.
+        """
+        payload = {
+            "model":       self.model,
+            "messages":    messages,
+            "temperature": kwargs.get("temperature", 0.7),
+            "max_tokens":  kwargs.get("max_tokens", 1024),
+            # You can pass in any other Grok/Chat-Completions params here
+        }
+
+        resp = await self._client.post("/chat/completions", json=payload)
+        resp.raise_for_status()        # raises if xAI returns 4xx/5xx
+        data = resp.json()
+
+        # xAI mirrors the OpenAI response shape:
+        return data["choices"][0]["message"]["content"]
+
+    async def __aexit__(self, *exc):
+        await self._client.aclose()
