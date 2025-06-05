@@ -9,21 +9,21 @@ Fabricate nothing. Output only the completed brief.
 """
 
 TEMPLATE = """
-Analyze the provided `{input}` to produce a structured 'Creative Brief' in Markdown.
+Analyze the provided `parental_input` to produce a structured 'Creative Brief' in Markdown.
 Your output MUST strictly follow the format and sections detailed below.
 
 Key Instructions:
-* Extract information from `{input}` for every field in the template.
+* Extract information from `parental_input` for every field in the template.
 * For each field, if the corresponding information is not found in the input, you MUST explicitly state 'Not specified by parent'.
 * Do NOT invent or infer any information.
 * Your final output MUST be ONLY the 'Creative Brief' Markdown document, matching the structure shown.
 
 Parental Input:
 -------------------------------
-{input}
+{parental_input}
 -------------------------------
 
-**Creative Brief for Picture Book Project**
+**Creative Brief**
 
 **1. Child's Profile:**
     * **Child's Name (for reference/use in story):** [Extracted name(s) or 'Not specified by parent']
