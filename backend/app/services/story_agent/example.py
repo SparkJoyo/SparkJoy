@@ -13,7 +13,7 @@ async def main():
     provider = OpenAIProvider(api_key=api_key)
     agent = IntakeAgent(provider)
 
-    parental_input = """
+    input0 = """
     Story. Girl. Ball. Park. Lily 2 yrs. She got a new bouncy ball today.
     """
     input1 = """

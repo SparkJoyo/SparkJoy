@@ -55,10 +55,10 @@ Parental Input:
     * [Include any other relevant extracted information or direct quotes OR 'Not specified by parent']
 """
 
-class IntakeAgent(Agent):
+class CreativeAgent(Agent):
     def __init__(self, provider, system_prompt=None, user_template=None):
         super().__init__(
-            "Intake",
+            "Creative",
             system_prompt if system_prompt is not None else SYSTEM,
             user_template if user_template is not None else TEMPLATE,
             provider
