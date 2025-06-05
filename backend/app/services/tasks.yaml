@@ -1,0 +1,54 @@
+text_input_analysis:
+  description: >
+    Analyze the provided 'Parental Input' (see below) regarding their desires for a
+    children's picture book. Your sole objective is to transform this input into a meticulously
+    structured 'Creative Brief'.
+
+    You must extract information for each section and sub-point of the 'Creative Brief' template.
+    If information for a specific point is not found in the input, you MUST explicitly state
+    'Not specified by parent' for that point. Do NOT invent or infer information beyond what is provided.
+
+    Parental Input:
+    -------------------------------
+    {parental_input}
+    -------------------------------
+
+    Structure your output EXACTLY as follows, using the information extracted:
+
+    **Creative Brief for Picture Book Project**
+
+    **1. Child's Profile:**
+        * **Child's Name (for reference/use in story):** [Extract or state 'Not specified']
+        * **Child's Age:** [Extract or state 'Not specified']
+        * **Key Interests & Passions:** [List all mentioned, e.g., dinosaurs, space, animals, specific toys, activities, colors]
+        * **Favorite Books/Characters (if mentioned):** [Extract or state 'Not specified']
+        * **Child's Personality Insights (if mentioned):** [e.g., adventurous, shy, curious, funny]
+        * **Any Fears or Sensitivities to Avoid:** [Extract or state 'Not specified']
+
+    **2. Story Vision & Goals:**
+        * **Primary Purpose of the Book:** [e.g., entertainment, teach a specific lesson (specify lesson), commemorate event, address challenge]
+        * **Desired Tone & Mood:** [e.g., lighthearted, adventurous, gentle, humorous, educational, whimsical, magical]
+        * **Desired Story Length/Complexity:** [e.g., word count, page estimate, suitability for short attention spans, if mentioned]
+
+    **3. Content & Element Preferences:**
+        * **Main Character Ideas (if any from parent):** [Describe any character ideas parent suggested, or if child should be protagonist]
+        * **Supporting Character Ideas (if any):** [e.g., family members, pets, magical creatures mentioned]
+        * **Setting Preferences:** [e.g., specific locations like 'grandma's garden', or general like 'a magical forest', 'space']
+        * **Specific Plot Points or Scene Ideas (if any):** [Extract any story beats parent wants]
+        * **'Must-Have' Elements:** [List any objects, phrases, specific details, names parent insists on including]
+        * **'Elements to Strictly Avoid':** [List anything parent explicitly wants excluded (themes, objects, characters)]
+
+    **4. Art Style & Visuals (if mentioned by parent):**
+        * **Preferred Art Style Descriptors:** [e.g., cartoonish, realistic, whimsical, watercolor, bold graphics, examples given by parent]
+        * **Any Specific Visual Elements Mentioned:** [e.g., 'lots of bright colors', 'no scary images']
+
+    **5. Additional Notes & Context from Parent:**
+        * [Include any other relevant information or direct quotes from the parent that don't fit neatly above but seem important]
+
+    Your final output MUST be this structured 'Creative Brief' and nothing else.
+
+  expected_output: >
+    A 'Creative Brief for Picture Book' document, formatted precisely as
+    specified in the description, with all info filled by either
+    extracting the relevant info from the parental input or by stating
+    'Not specified' if the info was absent. 

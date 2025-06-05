@@ -5,5 +5,3 @@ openai             # Story generation
 pydantic
 dotenv
 together
-# CrewAI Multi-Agent Framework
-crewai
