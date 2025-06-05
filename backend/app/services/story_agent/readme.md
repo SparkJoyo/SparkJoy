@@ -1,22 +1,33 @@
-   Multi-agent story generation system using plain python implementation.
-   
-   Agents:
-    1. Story Analyst - Analyzes images and user inputs
-    2. Story Writer - Creates the main story content
-    3. Story Enhancer - Adds emotional depth and engagement
-    4. Visual Coordinator - Plans visual elements for each segment
-    5. Quality Reviewer - Reviews and refines the final story
+# Multi-Agent Story Generation System
 
+A plain Python implementation for multi-agent story generation.
 
-# examples
-## input 
+## Agents
+1. **Text Input Analyst** - Parse parent input into a structured brief
+2. **Image Input Analyst** - Parse uploaded images into structured brief
+3. **Creative Director** - Generate diverse story concepts based on the parent's inputs (text and/or images)
+4. **Concept Reviewer** - Review the story concepts and generate a final best story brief (could be one of or the synthesis of the concepts)
+5. **Story Writer** - Develop a full narrative based on a chosen concept
+6. **Story Editor** - Reviews and refines the final story
+7. **Art Director** - Creates detailed illustration notes
+
+---
+
+## Example Input
+```
 pls make a story for olivia she is 3. she just learned to put on her OWN jacket 
 with the zipper! she did it all by herself before we went to the park this 
 morning to feed ducks. can the story be about olivia or a girl like her getting 
 ready to go out, zipping her jacket (make the zipper sound like Zzzzzzip!), 
 and then having fun at the park? short and sweet please.
+```
 
-# openai
+---
+
+## LLM Outputs
+
+### OpenAI
+```
 ========== RESULT ==========
 ### Concept 1: Olivia's Zipping Adventure
 - **Title:** Olivia's Zipping Adventure
@@ -44,10 +55,12 @@ and then having fun at the park? short and sweet please.
     - Olivia (a joyful and adventurous girl)
     - Daisy and Drake (playful duck siblings)
 - **Core Theme Alignment:** Emphasizes the pride and excitement of learning a new skill, combined with the joys of exploration and friendship in nature.
+```
 
+---
 
-
-# claude
+### Claude
+```
 ### Concept 1: Olivia's Zzzip-tastic Day!
 - **Title:** Olivia's Zzzip-tastic Day!
 - **Logline:** Olivia masters zipping her jacket, unlocking a fun-filled adventure at the park.
@@ -76,12 +89,12 @@ and then having fun at the park? short and sweet please.
     - Olivia's proud parents
     - Honking, hungry ducks at the park pond
 - **Core Theme Alignment:** Showcases the pride of accomplishing a new skill (zipping a jacket) and celebrates the simple joys of playing outdoors and interacting with nature (feeding ducks at park).
+```
 
+---
 
-
-
-# If i do the bare minimum
-
+### Bare Minimum Prompt Example
+```
 ========== SYSTEM PROMPT ==========
 
 ========== USER PROMPT ==========
@@ -93,7 +106,8 @@ morning to feed ducks. can the story be about olivia or a girl like her getting
 ready to go out, zipping her jacket (make the zipper sound like Zzzzzzip!), 
 and then having fun at the park? short and sweet please.
 
-    generate 3 creative concepts for a picture book story.
+generate 3 creative concepts for a picture book story.
+
 ========== RESULT ==========
 Certainly! Here are three creative concepts for a picture book story featuring Olivia and her new skill:
 
@@ -105,10 +119,12 @@ In this whimsical tale, Olivia's jacket has a magical zipper that makes a fun Zz
 
 3. **Olivia's Zipper Zoo Day**  
 Olivia is thrilled because today's park visit means a special trip to the section with a duck pond! She quickly grabs her jacket, determined to zip it up all by herself for the first time. With a confident Zzzzzzip!, she's ready to go. At the park, Olivia imagines the ducks are part of a grand zoo, and she's their favorite zookeeper. She talks to the ducks, tells them stories, and even pretends they're a marching band, quacking in perfect harmony. Olivia's imagination turns a simple park day into an extraordinary adventure, and she can't wait to see what else her trusty jacket zipper will lead her to next time.
+```
 
+---
 
-
-# this is from Grok
+### Grok
+```
 ========== RESULT ==========
 ### Concept 1
 - **Title:** Olivia's Zipper Victory
@@ -127,13 +143,13 @@ Olivia is thrilled because today's park visit means a special trip to the sectio
 - **Key Characters:**
   - Olivia, a curious and proud 3-year-old
   - A flock of talking ducks with funny personalities
-- **Core Theme Alignment:** Highlights Olivia’s achievement of zipping her jacket as a magical milestone while weaving in the joy of outdoor park fun with imaginative duck interactions.
+- **Core Theme Alignment:** Highlights Olivia's achievement of zipping her jacket as a magical milestone while weaving in the joy of outdoor park fun with imaginative duck interactions.
 
 ### Concept 3
-- **Title:** Olivia’s Zipper Adventure
+- **Title:** Olivia's Zipper Adventure
 - **Logline:** Olivia masters her jacket zipper with a "Zzzzzzip!" and embarks on a park quest to share her snack with hungry ducks.
-- **Plot Summary:** Olivia beams with pride as she zips her jacket all by herself, hearing the satisfying "Zzzzzzip!" sound for the first time. Ready for an adventure, she marches to the park with a bag of breadcrumbs, where she becomes the ducks’ new best friend by sharing her treat.
+- **Plot Summary:** Olivia beams with pride as she zips her jacket all by herself, hearing the satisfying "Zzzzzzip!" sound for the first time. Ready for an adventure, she marches to the park with a bag of breadcrumbs, where she becomes the ducks' new best friend by sharing her treat.
 - **Key Characters:**
   - Olivia, a brave and excited 3-year-old
   - A waddling duck family eager for snacks
-- **Core Theme Alignment:** Emphasizes Olivia’s sense of accomplishment in zipping her jacket independently and pairs it with the delightful outdoor experience of feeding ducks at the park.
+- **Core Theme Alignment:** Emphasizes Olivia's sense of accomplishment in zipping her jacket independently and pairs it with the delightful outdoor experience of feeding ducks at the park.
