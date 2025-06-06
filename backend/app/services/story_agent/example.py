@@ -1,5 +1,8 @@
 import asyncio
 import os
+import logging
+from datetime import datetime
+from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 from base import Agent
@@ -7,7 +10,27 @@ from intake import IntakeAgent
 from creative import CreativeAgent
 from llm_providers import OpenAIProvider, ClaudeProvider, GrokProvider
 
+# Optional: Set this to a string to add a custom comment at the top of the log file for this run.
+USER_RUN_COMMENT = None  # e.g., "Testing Grok with Olivia's jacket story input."
+
+# Ensure logs directory exists
+log_dir = Path("logs")
+log_dir.mkdir(exist_ok=True)
+log_filename = log_dir / f"llm_run_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+
+
 PROVIDER = "grok"  # Change to "openai" or "claude"
+
+input0 = """
+Story. Girl. Ball. Park. Lily 2 yrs. She got a new bouncy ball today.
+"""
+input1 = """
+pls make a story for olivia she is 3. she just learned to put on her OWN jacket 
+with the zipper! she did it all by herself before we went to the park this 
+morning to feed ducks. can the story be about olivia or a girl like her getting 
+ready to go out, zipping her jacket (make the zipper sound like Zzzzzzip!), 
+and then having fun at the park? short and sweet please.
+"""
 
 creative_brief = """
 **Creative Brief**
@@ -42,56 +65,69 @@ creative_brief = """
     * Olivia just learned to put on her own jacket with the zipper this morning before going to the park to feed ducks.
 """
 
+# Prepare a run comment for the log file
+if USER_RUN_COMMENT:
+    RUN_COMMENT = f"""
+# =============================================
+# USER COMMENT:
+# {USER_RUN_COMMENT}
+# =============================================
+"""
+else:
+    RUN_COMMENT = f"""
+# =============================================
+# LLM RUN - {datetime.now().isoformat()}
+# Input: 
+# {input1}
+# Main Creative Brief (truncated):
+# {(' '.join(line.strip() for line in str(creative_brief).splitlines() if line)[:300])}
+# =============================================
+"""
+
+# Write the run comment at the top of the log file
+with open(log_filename, "w") as f:
+    f.write(RUN_COMMENT)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    handlers=[
+        logging.FileHandler(log_filename, mode='a'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
 async def main():
     if PROVIDER == "openai":
-        provider = OpenAIProvider(api_key=os.getenv("OPENAI_API_KEY"))
+        api_key = os.getenv("OPENAI_API_KEY")
+        provider = OpenAIProvider(api_key=api_key)
+        model_version = provider.model
     elif PROVIDER == "claude":
-        provider = ClaudeProvider(api_key=os.getenv("CLAUDE_API_KEY"))
+        api_key = os.getenv("CLAUDE_API_KEY")
+        provider = ClaudeProvider(api_key=api_key)
+        model_version = provider.model
     elif PROVIDER == "grok":
-        provider = GrokProvider(api_key=os.getenv("GROK_API_KEY"))
+        api_key = os.getenv("GROK_API_KEY")
+        provider = GrokProvider(api_key=api_key)
+        model_version = provider.model
     else:
         raise ValueError(f"Unknown provider: {PROVIDER}")
 
-    input0 = """
-    Story. Girl. Ball. Park. Lily 2 yrs. She got a new bouncy ball today.
-    """
-    input1 = """
-pls make a story for olivia she is 3. she just learned to put on her OWN jacket 
-with the zipper! she did it all by herself before we went to the park this 
-morning to feed ducks. can the story be about olivia or a girl like her getting 
-ready to go out, zipping her jacket (make the zipper sound like Zzzzzzip!), 
-and then having fun at the park? short and sweet please.
-    """
-    # intake_agent = IntakeAgent(provider)
-    # system_prompt, user_prompt = intake_agent.get_formatted_prompts(parental_input=input1)
-    # print("SYSTEM PROMPT:\n", system_prompt)
-    # print("USER PROMPT:\n", user_prompt)
-    # result = await intake_agent(parental_input=input1)
-    # print(result)
-    # user_prompt = f"""based on the parental input: 
-    # {input1} 
-    # generate 3 creative concepts for a picture book story."""
     creative_agent = CreativeAgent(provider)
     system_prompt, user_prompt = creative_agent.get_formatted_prompts(creative_brief_md=creative_brief)
-    print("========== SYSTEM PROMPT ==========")
-    print(system_prompt)
-    print("========== USER PROMPT ==========")
-    print(user_prompt)
-    result = await creative_agent(creative_brief_md=creative_brief)
-    print("========== RESULT ==========")
-    print(result)
 
-    # what if i just pass in the parental input directly and ask for 3 concepts?
-    # Example usage
-    # base_agent = Agent("base_agent", system_prompt="", user_template=input1, provider=provider)
-    # system_prompt, user_prompt = base_agent.get_formatted_prompts(creative_brief_md=creative_brief)
-    # print("========== SYSTEM PROMPT ==========")
-    # print(system_prompt)
-    # print("========== USER PROMPT ==========")
-    # print(user_prompt)
-    # result = await base_agent()
-    # print("========== RESULT ==========")
-    # print(result)
+    logger.info(f"Model Provider: {PROVIDER}")
+    logger.info(f"Model Version: {model_version}")
+    logger.info("========== SYSTEM PROMPT ==========")
+    logger.info(system_prompt)
+    logger.info("========== USER PROMPT ==========")
+    logger.info(user_prompt)
+
+    result = await creative_agent(creative_brief_md=creative_brief)
+    logger.info("========== RESULT ==========")
+    logger.info(result)
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -8,3 +8,4 @@ dotenv
 together
 pytest 
 pytest-asyncio
+xai_sdk
