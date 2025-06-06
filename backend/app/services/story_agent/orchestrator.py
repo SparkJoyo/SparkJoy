@@ -30,45 +30,8 @@ ready to go out, zipping her jacket (make the zipper sound like Zzzzzzip!),
 and then having fun at the park? short and sweet please.
 """
 
-creative_brief = """
-**Creative Brief**
-
-**1. Child's Profile:**
-    * **Child's Name (for reference/use in story):** Olivia
-    * **Child's Age:** 3
-    * **Key Interests & Passions:** Not specified by parent
-    * **Favorite Books/Characters:** Not specified by parent
-    * **Child's Personality Insights:** Not specified by parent
-    * **Any Fears or Sensitivities to Avoid:** Not specified by parent
-
-**2. Story Vision & Goals:**
-    * **Primary Purpose of the Book:** To celebrate Olivia learning to zip up her own jacket
-    * **Key Message(s) or Theme(s) to Convey:** Pride in accomplishing a new skill (zipping jacket), having fun outdoors at the park 
-    * **Desired Tone & Mood:** Not specified by parent
-    * **Desired Story Length/Complexity:** Short and sweet
-
-**3. Content & Element Preferences:**
-    * **Main Character Ideas:** A girl like Olivia (possibly named Olivia)
-    * **Supporting Character Ideas:** Not specified by parent
-    * **Setting Preferences:** Getting ready to go out, then having fun at the park
-    * **Specific Plot Points or Scene Ideas:** Girl zipping up her jacket by herself (make zipper sound like "Zzzzzzip!"), then going to the park to feed ducks
-    * **'Must-Have' Elements:** Olivia or girl like her, zipping jacket by herself, zipper sound "Zzzzzzip!", going to park, feeding ducks
-    * **'Elements to Strictly Avoid':** Not specified by parent
-
-**4. Art Style & Visuals (if mentioned by parent):**
-    * **Preferred Art Style Descriptors:** Not specified by parent
-    * **Any Specific Visual Elements Mentioned:** Not specified by parent
-
-**5. Additional Notes & Context from Parent:**
-    * Olivia just learned to put on her own jacket with the zipper this morning before going to the park to feed ducks.
-"""
-
-creative_brief_test_without_structured_creative_brief = f"""
-{input1}
-"""
-
 # Optional: Set this to a string to add a custom comment at the top of the log file for this run.
-USER_RUN_COMMENT = "Testing DS model without structured creative brief."
+USER_RUN_COMMENT = "new prompt design for intake agent"
 if USER_RUN_COMMENT:
     RUN_COMMENT = f"""
 # =============================================
@@ -174,12 +137,44 @@ class Orchestrator:
             3. CreativeAgent extracts what it needs from 'intake' and produces its own output.
 
         This pattern generalizes to any number of agents and dependencies.
+        
+        ---
+        initial_artifacts usage:
+        -----------------------
+        Use initial_artifacts to inject the output of a dependency that is not produced by a previous agent in the current run. This is useful for:
+        - Resuming or testing a pipeline from a specific step (e.g., start from 'creative' with a precomputed 'intake' result)
+        - Bypassing expensive or unnecessary steps by providing their expected outputs directly
+        - Unit testing downstream agents with mock or saved artifacts
+        - Handling complex DAGs where some nodes depend on external data
+
+        | Use Case                        | How to Provide Input                |
+        |----------------------------------|-------------------------------------|
+        | First node’s input               | run_kwargs in AgentNode             |
+        | Downstream dependency injection  | initial_artifacts in run()          |
+        | Skipping/overriding a node       | initial_artifacts in run()          |
+        | Testing downstream agents        | initial_artifacts in run()          |
+
+        Example for resuming/testing:
+            saved_brief = "...markdown creative brief..."
+            nodes = [
+                AgentNode("creative", CreativeAgent, "together", dependencies=["intake"]),
+                AgentNode("story", StoryAgent, "openai", dependencies=["creative"]),
+            ]
+            orchestrator = Orchestrator(nodes)
+            result = await orchestrator.run(initial_artifacts={"intake": saved_brief})
         """
         artifacts = initial_artifacts.copy()
+        print("Execution order:", self.execution_order)
         for node_name in self.execution_order:
             node = self.nodes[node_name]
             provider = self._get_provider(node.provider_name, node.provider_kwargs)
             node.agent = node.agent_cls(provider, **node.agent_kwargs)
+
+            # Log the model name
+            model_name = getattr(provider, "model", None)
+            logger.info(f"========== {node_name.upper()} MODEL ==========")
+            logger.info(model_name if model_name else "Unknown model")
+
             # Gather input artifacts from dependencies
             input_artifacts = {dep: self.nodes[dep].result for dep in node.dependencies}
             # Merge run_kwargs with input_artifacts for agent call
@@ -211,9 +206,7 @@ async def main():
             "intake",
             IntakeAgent,
             "openai",
-            # agent_kwargs={"some_agent_param": 123},
-            # provider_kwargs={"model": "gpt-4"},
-            run_kwargs={"input_text": input1},
+            run_kwargs={"parental_input": input1},
         ),
         AgentNode(
             "creative",
@@ -225,7 +218,7 @@ async def main():
         ),
     ]
     orchestrator = Orchestrator(nodes)
-    result = await orchestrator.run(initial_artifacts={})
+    result = await orchestrator.run(initial_artifacts={"intake": {"creative_brief_md": "test"}})
 
 if __name__ == "__main__":
     asyncio.run(main())
