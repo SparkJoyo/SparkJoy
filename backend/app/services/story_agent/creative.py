@@ -39,6 +39,21 @@ LET'S BRAINSTROM!
 """
 
 class CreativeAgent(Agent):
+    """
+    CreativeAgent generates multiple creative story concepts for children's picture books based on a structured Creative Brief.
+    
+    Input (for __call__):
+        creative_brief_md (str): The structured creative brief in Markdown, typically produced by IntakeAgent.
+        (Pass as 'creative_brief_md' kwarg.)
+    
+    Output:
+        concepts_md (str): Markdown-formatted list of creative story concepts.
+    
+    DAG/Orchestrator Usage:
+        - This agent is typically downstream of IntakeAgent in the story generation DAG.
+        - It expects to receive the output artifact from IntakeAgent (creative_brief_md) as a kwarg named after the dependency (e.g., 'intake').
+        - If the dependency output is a dict, use the appropriate key (e.g., 'creative_brief_md') when calling this agent.
+    """
     def __init__(self, provider, system_prompt=None, user_template=None):
         super().__init__(
             "Creative",
