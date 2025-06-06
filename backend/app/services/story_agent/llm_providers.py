@@ -1,7 +1,9 @@
 from typing import List, Dict, Any
 import openai
 import anthropic
+import together
 import xai_sdk
+import httpx
 
 class LLMProvider:
     def format_messages(self, system_prompt, user_msg, **kwargs):
@@ -29,7 +31,7 @@ class OpenAIProvider(LLMProvider):
     
 
 class ClaudeProvider(LLMProvider):
-    def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):
+    def __init__(self, api_key: str, model: str = "claude-sonnet-4-20250514"):
         self.client = anthropic.AsyncAnthropic(api_key=api_key)
         self.model = model
 
@@ -52,13 +54,31 @@ class ClaudeProvider(LLMProvider):
 # If you prefer sync calls, swap in:  from openai import OpenAI
 
 
-import httpx
-from typing import List, Dict, Any
+class TogetherAIProvider(LLMProvider):
+    """
+    Async provider for Together AI's chat completions API.
+    Requires: together API key (https://docs.together.ai/docs/inference)
+    Example usage:
+        provider = TogetherAIProvider(api_key="TOGETHER_API_KEY", model="mistralai/Mixtral-8x7B-Instruct-v0.1")
+        messages = provider.format_messages("You are helpful.", "Hello!")
+        result = await provider.generate(messages)
+    """
+    def __init__(self, api_key: str, model: str = "deepseek-ai/DeepSeek-R1"):
+        self.client = together.AsyncClient(api_key=api_key)
+        self.model = model
+
+    async def generate(self, messages, **kwargs):
+        resp = await self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=kwargs.get("temperature", 0.7)
+        )
+        return resp.choices[0].message.content
+
 
 class GrokProvider(LLMProvider):
     """
     Asynchronous provider for xAI Grok models via the native REST API.
-    
     Example
     -------
     prov = GrokProvider(api_key="XAI_API_KEY", model="grok-2-latest")

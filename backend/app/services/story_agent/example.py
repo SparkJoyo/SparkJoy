@@ -8,10 +8,8 @@ load_dotenv()
 from base import Agent
 from intake import IntakeAgent
 from creative import CreativeAgent
-from llm_providers import OpenAIProvider, ClaudeProvider, GrokProvider
+from llm_providers import OpenAIProvider, ClaudeProvider, GrokProvider, TogetherAIProvider
 
-# Optional: Set this to a string to add a custom comment at the top of the log file for this run.
-USER_RUN_COMMENT = None  # e.g., "Testing Grok with Olivia's jacket story input."
 
 # Ensure logs directory exists
 log_dir = Path("logs")
@@ -19,7 +17,7 @@ log_dir.mkdir(exist_ok=True)
 log_filename = log_dir / f"llm_run_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
 
 
-PROVIDER = "grok"  # Change to "openai" or "claude"
+PROVIDER = "together"  # Change to "openai" or "claude"
 
 input0 = """
 Story. Girl. Ball. Park. Lily 2 yrs. She got a new bouncy ball today.
@@ -65,7 +63,12 @@ creative_brief = """
     * Olivia just learned to put on her own jacket with the zipper this morning before going to the park to feed ducks.
 """
 
-# Prepare a run comment for the log file
+creative_brief_test_without_structured_creative_brief = f"""
+{input1}
+"""
+
+# Optional: Set this to a string to add a custom comment at the top of the log file for this run.
+USER_RUN_COMMENT = "Testing DS model without structured creative brief."
 if USER_RUN_COMMENT:
     RUN_COMMENT = f"""
 # =============================================
@@ -112,11 +115,15 @@ async def main():
         api_key = os.getenv("GROK_API_KEY")
         provider = GrokProvider(api_key=api_key)
         model_version = provider.model
+    elif PROVIDER == "together":
+        api_key = os.getenv("TOGETHER_API_KEY")
+        provider = TogetherAIProvider(api_key=api_key)
+        model_version = provider.model
     else:
         raise ValueError(f"Unknown provider: {PROVIDER}")
 
     creative_agent = CreativeAgent(provider)
-    system_prompt, user_prompt = creative_agent.get_formatted_prompts(creative_brief_md=creative_brief)
+    system_prompt, user_prompt = creative_agent.get_formatted_prompts(creative_brief_md=creative_brief_test_without_structured_creative_brief)
 
     logger.info(f"Model Provider: {PROVIDER}")
     logger.info(f"Model Version: {model_version}")

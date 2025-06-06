@@ -17,20 +17,16 @@ Generate 3 distinct, imaginative, and engaging story concepts. Format your outpu
 Each concept should start with a Level 3 Markdown heading (e.g., ### Concept 1).
 Under each concept heading, provide the following details using bolded labels and then the information:
 - **Title:** [Potential title]
-- **Logline:** [One-sentence summary]
 - **Plot Summary:** [2-3 sentence plot idea]
 - **Key Characters:** [List main character ideas as bullet points]
-- **Core Theme Alignment:** [How it aligns with themes in brief]
 
 Example for one concept:
 ### Concept 1: The Magical Crayon
 - **Title:** Lily and the Magical Crayon
-- **Logline:** A young girl discovers a crayon that brings her drawings to life, leading to a whimsical adventure in her own backyard.
 - **Plot Summary:** Lily finds a sparkling crayon. She draws a friendly dragon, which pops off the page! Together they explore, drawing solutions to small challenges they encounter.
 - **Key Characters:**
     - Lily (as described in brief)
     - Sparky the Drawn Dragon
-- **Core Theme Alignment:** Aligns with themes of imagination, problem-solving, and friendship.
 
 Ensure concepts align with the child's age, interests, and desired themes from the brief.
 Output ONLY the Markdown content for the 3 concepts. Do not include any preamble.
@@ -38,6 +34,8 @@ Output ONLY the Markdown content for the 3 concepts. Do not include any preamble
 --- Creative Brief ---
 {creative_brief_md}
 --- End Creative Brief ---
+
+LET'S BRAINSTROM!
 """
 
 class CreativeAgent(Agent):
