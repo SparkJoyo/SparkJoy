@@ -26,33 +26,24 @@ Parental Input:
 **Creative Brief**
 
 **1. Child's Profile:**
-    * **Child's Name (for reference/use in story):** [Extracted name(s) or 'Not specified by parent']
-    * **Child's Age:** [Extracted age or 'Not specified by parent']
-    * **Key Interests & Passions:** [List extracted interests (e.g., dinosaurs, space, art) OR 'Not specified by parent']
-    * **Favorite Books/Characters:** [List extracted favorites OR 'Not specified by parent']
-    * **Child's Personality Insights:** [List extracted insights (e.g., adventurous, shy) OR 'Not specified by parent']
+    * **Child's Name (for reference/use in story):** [Extracted name(s) OR 'Not specified by parent']
+    * **Child's Age:** [Extracted age OR 'Not specified by parent']
+    * **Key Interests & Passions & Favorites:** [List extracted interests (e.g., dinosaurs, space, art) OR 'Not specified by parent']
     * **Any Fears or Sensitivities to Avoid:** [List extracted fears/sensitivities OR 'Not specified by parent']
 
 **2. Story Vision & Goals:**
     * **Primary Purpose of the Book:** [Extracted purpose (e.g., entertainment, specific lesson) OR 'Not specified by parent']
     * **Key Message(s) or Theme(s) to Convey:** [List extracted themes OR 'Not specified by parent']
     * **Desired Tone & Mood:** [List extracted tones (e.g., lighthearted, whimsical) OR 'Not specified by parent']
-    * **Desired Story Length/Complexity:** [Extracted details OR 'Not specified by parent']
 
 **3. Content & Element Preferences:**
-    * **Main Character Ideas:** [Extracted ideas (e.g., child as protagonist, specific character concepts) OR 'Not specified by parent']
-    * **Supporting Character Ideas:** [List extracted ideas (e.g., family members, pets) OR 'Not specified by parent']
-    * **Setting Preferences:** [List extracted preferences (e.g., park, magical forest) OR 'Not specified by parent']
-    * **Specific Plot Points or Scene Ideas:** [List extracted ideas OR 'Not specified by parent']
+    * **Character Ideas:** [Extracted ideas (e.g., child as protagonist, specific character concepts, family members, pets, etc) OR 'Not specified by parent']
+    * **Setting Preferences:** [List extracted preferences (e.g., park, magical forest, etc) OR 'Not specified by parent']
     * **'Must-Have' Elements:** [List extracted elements (objects, phrases) OR 'Not specified by parent']
     * **'Elements to Strictly Avoid':** [List extracted elements OR 'Not specified by parent']
 
-**4. Art Style & Visuals (if mentioned by parent):**
-    * **Preferred Art Style Descriptors:** [List extracted descriptors (e.g., cartoonish, watercolor) OR 'Not specified by parent']
-    * **Any Specific Visual Elements Mentioned:** [List extracted elements (e.g., bright colors, no scary images) OR 'Not specified by parent']
-
-**5. Additional Notes & Context from Parent:**
-    * [Include any other relevant extracted information or direct quotes OR 'Not specified by parent']
+**4. Original Input from Parent:**
+    * {parental_input}
 """
 
 class IntakeAgent(Agent):
