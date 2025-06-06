@@ -65,31 +65,25 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class AgentNode:
-    def __init__(
-        self,
-        name,
-        agent_cls,
-        provider_name,
-        dependencies=None,
-        agent_kwargs=None,
-        provider_kwargs=None,
-        run_kwargs=None,  # For runtime/step-specific kwargs
-    ):
-        self.name = name
-        self.agent_cls = agent_cls
-        self.provider_name = provider_name
-        self.dependencies = dependencies or []
-        self.agent_kwargs = agent_kwargs or {}
-        self.provider_kwargs = provider_kwargs or {}
-        self.run_kwargs = run_kwargs or {}
-        self.agent = None
-        self.result = None
+AGENT_CONFIGS = {
+    "intake": {
+        "provider_name": "openai",
+        "provider_kwargs": {"model": "gpt-4"},
+        "system_prompt": None,
+        "user_template": None,
+    },
+    "creative": {
+        "provider_name": "together",
+        "provider_kwargs": {"model": "deepseek-ai/DeepSeek-R1"},
+        "system_prompt": None,
+        "user_template": None,
+    },
+    # Add more agents as needed
+}
 
 class Orchestrator:
-    def __init__(self, nodes):
-        self.nodes = {node.name: node for node in nodes}
-        self.execution_order = self._topological_sort()
+    def __init__(self, agent_configs):
+        self.agent_configs = agent_configs
 
     def _get_provider(self, provider_name, provider_kwargs):
         if provider_name == "openai":
@@ -103,122 +97,45 @@ class Orchestrator:
         else:
             raise ValueError(f"Unknown provider: {provider_name}")
 
-    def _topological_sort(self):
-        return [node.name for node in self.nodes.values()]
-
-    async def run(self, initial_artifacts):
+    async def run(self):
         """
-        Executes the DAG of agent nodes in topological order, passing artifacts (outputs) from node to node.
-
-        Artifact Naming & Passing:
-        -------------------------
-        - Each agent node's output is stored in the artifacts dict under its node name (e.g., 'intake', 'creative').
-        - When an agent has dependencies, the orchestrator passes the output of each dependency as a keyword argument to the agent, using the dependency's node name as the kwarg name.
-        - If an agent returns a dict, the entire dict is passed as the kwarg value (e.g., 'intake': {...}).
-        - Downstream agents should accept kwargs named after their dependencies and extract the needed values.
-
-        Example:
-        --------
-        Suppose you have two agents:
-            - IntakeAgent (node name: 'intake')
-            - CreativeAgent (node name: 'creative', depends on 'intake')
-
-        The DAG setup:
-            nodes = [
-                AgentNode('intake', IntakeAgent, 'openai', run_kwargs={'parental_input': input1}),
-                AgentNode('creative', CreativeAgent, 'together', dependencies=['intake'])
-            ]
-            orchestrator = Orchestrator(nodes)
-            results = await orchestrator.run(initial_artifacts={})
-
-        Execution flow:
-            1. IntakeAgent runs first, receives 'parental_input', and produces a creative brief (md).
-            2. CreativeAgent runs next, and receives the output of IntakeAgent as a kwarg: creative_agent(intake=<intake_result>)
-            3. CreativeAgent extracts what it needs from 'intake' and produces its own output.
-
-        This pattern generalizes to any number of agents and dependencies.
-        
-        ---
-        initial_artifacts usage:
-        -----------------------
-        Use initial_artifacts to inject the output of a dependency that is not produced by a previous agent in the current run. This is useful for:
-        - Resuming or testing a pipeline from a specific step (e.g., start from 'creative' with a precomputed 'intake' result)
-        - Bypassing expensive or unnecessary steps by providing their expected outputs directly
-        - Unit testing downstream agents with mock or saved artifacts
-        - Handling complex DAGs where some nodes depend on external data
-
-        | Use Case                        | How to Provide Input                |
-        |----------------------------------|-------------------------------------|
-        | First node’s input               | run_kwargs in AgentNode             |
-        | Downstream dependency injection  | initial_artifacts in run()          |
-        | Skipping/overriding a node       | initial_artifacts in run()          |
-        | Testing downstream agents        | initial_artifacts in run()          |
-
-        Example for resuming/testing:
-            saved_brief = "...markdown creative brief..."
-            nodes = [
-                AgentNode("creative", CreativeAgent, "together", dependencies=["intake"]),
-                AgentNode("story", StoryAgent, "openai", dependencies=["creative"]),
-            ]
-            orchestrator = Orchestrator(nodes)
-            result = await orchestrator.run(initial_artifacts={"intake": saved_brief})
+        Run the orchestrator.
         """
-        artifacts = initial_artifacts.copy()
-        print("Execution order:", self.execution_order)
-        for node_name in self.execution_order:
-            node = self.nodes[node_name]
-            provider = self._get_provider(node.provider_name, node.provider_kwargs)
-            node.agent = node.agent_cls(provider, **node.agent_kwargs)
+        # intake
+        provider = self._get_provider(AGENT_CONFIGS["intake"]["provider_name"], 
+                                      AGENT_CONFIGS["intake"]["provider_kwargs"])
+        intake_agent = IntakeAgent(provider, 
+                                   AGENT_CONFIGS["intake"]["system_prompt"], 
+                                   AGENT_CONFIGS["intake"]["user_template"])
+        logger.info(f"========== INTAKE MODEL =================================")
+        system_prompt, user_prompt = intake_agent.get_formatted_prompts(parental_input=input1)
+        logger.info(f"========== INTAKE SYSTEM PROMPT ==========================")
+        logger.info(f"========== INTAKE USER PROMPT ===========================")
+        intake_md = await intake_agent(parental_input=input1)
+        logger.info(f"========== INTAKE RESULT =================================")
 
-            # Log the model name
-            model_name = getattr(provider, "model", None)
-            logger.info(f"========== {node_name.upper()} MODEL ==========")
-            logger.info(model_name if model_name else "Unknown model")
+        # concepts
+        provider = self._get_provider(AGENT_CONFIGS["creative"]["provider_name"], 
+                                      AGENT_CONFIGS["creative"]["provider_kwargs"])
+        creative_agent = CreativeAgent(provider, 
+                                       AGENT_CONFIGS["creative"]["system_prompt"], 
+                                       AGENT_CONFIGS["creative"]["user_template"])
+        logger.info(f"========== CREATIVE MODEL =================================")
+        system_prompt, user_prompt = creative_agent.get_formatted_prompts(creative_brief_md=intake_md)
+        logger.info(f"========== CREATIVE SYSTEM PROMPT ==========================")
+        logger.info(f"========== CREATIVE USER PROMPT ===========================")
+        concepts_md = await creative_agent(creative_brief_md=intake_md)
+        logger.info(f"========== CREATIVE RESULT =================================")
 
-            # Gather input artifacts from dependencies
-            input_artifacts = {dep: self.nodes[dep].result for dep in node.dependencies}
-            # Merge run_kwargs with input_artifacts for agent call
-            agent_input = {**input_artifacts, **node.run_kwargs}
-
-            # Get and log system/user prompts
-            if hasattr(node.agent, "get_formatted_prompts"):
-                try:
-                    system_prompt, user_prompt = node.agent.get_formatted_prompts(**agent_input)
-                    logger.info(f"========== {node_name.upper()} SYSTEM PROMPT ==========")
-                    logger.info(system_prompt)
-                    logger.info(f"========== {node_name.upper()} USER PROMPT ==========")
-                    logger.info(user_prompt)
-                except Exception as e:
-                    logger.warning(f"Could not get prompts for {node_name}: {e}")
-
-            # Run the agent and log result
-            node.result = await node.agent(**agent_input)
-            artifacts[node_name] = node.result
-            logger.info(f"========== {node_name.upper()} RESULT ==========")
-            logger.info(node.result)
-
-        return artifacts
+        return {
+            "intake_md": intake_md,
+            "concepts": concepts_md,
+        }
 
 async def main():
-
-    nodes = [
-        AgentNode(
-            "intake",
-            IntakeAgent,
-            "openai",
-            run_kwargs={"parental_input": input1},
-        ),
-        AgentNode(
-            "creative",
-            CreativeAgent,
-            "together",
-            dependencies=["intake"],
-            # agent_kwargs={"creativity_level": "high"},
-            # provider_kwargs={"model": "together-llama"},
-        ),
-    ]
-    orchestrator = Orchestrator(nodes)
-    result = await orchestrator.run(initial_artifacts={"intake": {"creative_brief_md": "test"}})
+    orchestrator = Orchestrator(AGENT_CONFIGS)
+    result = await orchestrator.run()
+    print(result)
 
 if __name__ == "__main__":
     asyncio.run(main())

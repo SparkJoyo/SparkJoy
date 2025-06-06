@@ -4,7 +4,7 @@ import openai, os, textwrap, asyncio, string
 from typing import Any, Dict
 from app.services.story_agent.llm_providers import LLMProvider
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_required_variables(template):
     return {v for _, v, _, _ in string.Formatter().parse(template) if v}
