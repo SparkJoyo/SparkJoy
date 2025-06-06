@@ -39,6 +39,6 @@ Parental Input:
     * **'Must-Have' Elements:** [List extracted elements (objects, phrases) OR 'Not specified by parent']
     * **'Elements to Strictly Avoid':** [List extracted elements OR 'Not specified by parent']
 
-**4. Original Input from Parent:**
-    * {parental_input}
+**4. Additional Notes & Context from Parent:**Add commentMore actions
+    * [Include any other relevant extracted information or direct quotes OR 'Not specified by parent']
 """

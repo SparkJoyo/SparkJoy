@@ -45,8 +45,6 @@ else:
 # LLM RUN - {datetime.now().isoformat()}
 # Input: 
 # {input1}
-# Main Creative Brief (truncated):
-# {(' '.join(line.strip() for line in str(creative_brief).splitlines() if line)[:300])}
 # =============================================
 """
 
